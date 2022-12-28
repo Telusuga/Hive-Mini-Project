@@ -1,0 +1,1007 @@
+1. Create a schema based on the given dataset
+
+First create a temporary table to load the initial table
+hive> describe agent_logging_report_landing;
+OK
+col_name        data_type       comment
+sl_no                   int
+agent_name              string
+dt                      string
+login_time              string
+logout_time             string
+duration                string
+Time taken: 0.547 seconds, Fetched: 6 row(s)
+hive>
+
+hive> select * from agent_logging_report_landing limit 5;
+OK
+agent_logging_report_landing.sl_no      agent_logging_report_landing.agent_name agent_logging_report_landing.dt agent_logging_report_landing.login_time agent_logging_report_landing.logout_time        agent_logging_report_landing.duration
+1       Shivananda Sonwane      30-Jul-22       15:35:29        17:39:39        02:04:10
+2       Khushboo Priya  30-Jul-22       15:06:59        15:07:16        00:00:17
+3       Nandani Gupta   30-Jul-22       15:04:24        17:31:07        02:26:42
+4       Hrisikesh Neogi 30-Jul-22       14:34:29        15:19:35        00:45:06
+5       Mukesh  30-Jul-22       14:03:15        15:11:52        01:08:36
+
+Now create the actual table 
+hive> describe agent_logging_report;
+OK
+col_name        data_type       comment
+sl_no                   int
+agent_name              string
+dt                      date
+login_time              string
+logout_time             string
+duration                string
+Time taken: 0.439 seconds, Fetched: 6 row(s)
+hive>
+
+#Inserting the data from temporary table to actual table
+insert overwrite table agent_logging_report_landing select sl_no,agent_name,from_unixtime(unix_timestamp(dt,'dd-MMM-yy'), 'yyyy-MM-dd'),login_time,logout_time,duration
+
+
+hive> select * from agent_logging_report limit 5;
+OK
+Time taken: 0.243 seconds
+OK
+agent_logging_report.sl_no      agent_logging_report.agent_name agent_logging_report.dt agent_logging_report.login_time agent_logging_report.logout_time        agent_logging_report.duration
+1       Shivananda Sonwane      2022-07-30      15:35:29        17:39:39        02:04:10
+2       Khushboo Priya  2022-07-30      15:06:59        15:07:16        00:00:17
+3       Nandani Gupta   2022-07-30      15:04:24        17:31:07        02:26:42
+4       Hrisikesh Neogi 2022-07-30      14:34:29        15:19:35        00:45:06
+5       Mukesh  2022-07-30      14:03:15        15:11:52        01:08:36
+Time taken: 0.173 seconds, Fetched: 5 row(s)
+hive>
+
+2. Dump the data inside the hdfs in the given schema location.
+
+[cloudera@quickstart Hive-Mini_project_1]$ ll
+total 176
+-rw-r--r-- 1 cloudera cloudera   1183 Dec 27 10:47 000000_0
+-rw-rw-r-- 1 cloudera cloudera  55351 Dec 28 11:43 AgentLogingReport.csv
+-rw-rw-r-- 1 cloudera cloudera 109853 Dec 28 11:43 AgentPerformance.csv
+drwxrwxr-x 2 cloudera cloudera   4096 Dec 27 10:54 left_join
+drwxrwxr-x 2 cloudera cloudera   4096 Dec 27 10:57 right_join
+[cloudera@quickstart Hive-Mini_project_1]$ hadoop fs -put AgentLogingReport.csv /Mini-1
+[cloudera@quickstart Hive-Mini_project_1]$ hadoop fs -ls /Mini-1
+Found 1 items
+-rw-r--r--   1 cloudera supergroup      55351 2022-12-28 11:49 /Mini-1/AgentLogingReport.csv
+[cloudera@quickstart Hive-Mini_project_1]$ hadoop fs -put AgentPerformance.csv /Mini-1
+[cloudera@quickstart Hive-Mini_project_1]$ hadoop fs -ls /Mini-1
+Found 2 items
+-rw-r--r--   1 cloudera supergroup      55351 2022-12-28 11:49 /Mini-1/AgentLogingReport.csv
+-rw-r--r--   1 cloudera supergroup     109853 2022-12-28 11:50 /Mini-1/AgentPerformance.csv
+[cloudera@quickstart Hive-Mini_project_1]$
+
+
+3. List of all agents' names. 
+
+hive> select agent_name from Agent_Performance limit 5;
+OK
+Prerna Singh
+Nandani Gupta
+Ameya Jain
+Mahesh Sarade
+Swati
+Time taken: 0.174 seconds, Fetched: 5 row(s)
+hive>
+
+4. Find out agent average rating.
+
+hive> select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name limit 5;
+Query ID = cloudera_20221227110000_75b20de9-6934-45ff-abdb-0d572729d17f
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0007, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0007/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0007
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:00:30,072 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:00:37,555 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.69 sec
+2022-12-27 11:00:45,010 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.54 sec
+MapReduce Total cumulative CPU time: 3 seconds 540 msec
+Ended Job = job_1672165844887_0007
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0008, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0008/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0008
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:00:55,796 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:01:05,942 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.8 sec
+2022-12-27 11:01:17,792 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.83 sec
+MapReduce Total cumulative CPU time: 3 seconds 830 msec
+Ended Job = job_1672165844887_0008
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.54 sec   HDFS Read: 21725 HDFS Write: 2733 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.83 sec   HDFS Read: 7826 HDFS Write: 102 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 370 msec
+OK
+Abhishek        0.0
+Aditya  0.0
+Aditya Shinde   1.8003333409627278
+Aditya_iot      2.3453333377838135
+Amersh  0.0
+Time taken: 60.685 seconds, Fetched: 5 row(s)
+hive>
+
+5. Total working days for each agents 
+
+hive> select agent_name,count(dt) as number_of_working_days from agent_logging_report group by agent_name order by agent_name ;
+Query ID = cloudera_20221227110303_37c80e88-4514-4e5c-acdf-ae7924d34f33
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0009, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0009/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0009
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:03:59,210 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:04:08,846 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.59 sec
+2022-12-27 11:04:19,619 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.35 sec
+MapReduce Total cumulative CPU time: 4 seconds 350 msec
+Ended Job = job_1672165844887_0009
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0010, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0010/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0010
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:04:29,202 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:04:38,757 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.64 sec
+2022-12-27 11:04:49,492 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.57 sec
+MapReduce Total cumulative CPU time: 3 seconds 570 msec
+Ended Job = job_1672165844887_0010
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.35 sec   HDFS Read: 67624 HDFS Write: 1617 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.57 sec   HDFS Read: 6589 HDFS Write: 772 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 920 msec
+OK
+Aditya Shinde   1
+Aditya_iot      9
+Amersh  4
+Ameya Jain      10
+Ankitjha        4
+Anurag Tiwari   37
+Aravind 10
+Ayushi Mishra   18
+Bharath 9
+Boktiar Ahmed Bappy     17
+Chaitra K Hiremath      13
+Deepranjan Gupta        58
+Dibyanshu       208
+Harikrishnan Shaji      23
+Hrisikesh Neogi 37
+Hyder Abbas     2
+Ineuron Intelligence    1
+Ishawant Kumar  49
+Jawala Prakash  16
+Jaydeep Dixit   11
+Khushboo Priya  18
+Madhulika G     17
+Mahesh Sarade   36
+Maitry  5
+Manjunatha A    8
+Mithun S        14
+Mukesh  3
+Muskan Garg     12
+Nandani Gupta   11
+Nishtha Jain    18
+Nitin M 1
+Prabir Kumar Satapathy  26
+Prateek _iot    17
+Prerna Singh    18
+Rishav Dash     12
+Saikumarreddy N 10
+Sanjeev Kumar   20
+Saurabh Shukla  40
+Shiva Srivastava        15
+Shivan K        36
+Shivananda Sonwane      15
+Shubham Sharma  35
+Sowmiya Sivakumar       24
+Sudhanshu Kumar 11
+Suraj S Bilgi   5
+Swati   5
+Tarun   1
+Wasim   20
+Zeeshan 10
+Time taken: 59.015 seconds, Fetched: 49 row(s)
+hive>
+
+6. Total query that each agent have taken
+
+hive> select Agent_name,sum(Total_Charts) from Agent_Performance group by Agent_name order by Agent_name limit 5;
+Query ID = cloudera_20221227110606_1b9e0fd4-cc3e-4005-b46c-ad9e537c2ee3
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0011, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0011/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0011
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:06:28,061 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:06:38,775 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.6 sec
+2022-12-27 11:06:56,985 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.35 sec
+MapReduce Total cumulative CPU time: 3 seconds 350 msec
+Ended Job = job_1672165844887_0011
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0012, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0012/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0012
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:07:09,182 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:07:32,300 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 2.25 sec
+2022-12-27 11:07:53,516 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.32 sec
+MapReduce Total cumulative CPU time: 4 seconds 320 msec
+Ended Job = job_1672165844887_0012
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.35 sec   HDFS Read: 20296 HDFS Write: 2308 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.32 sec   HDFS Read: 7379 HDFS Write: 66 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 670 msec
+OK
+Abhishek        0
+Aditya  0
+Aditya Shinde   277
+Aditya_iot      231
+Amersh  0
+Time taken: 97.405 seconds, Fetched: 5 row(s)
+hive>
+
+
+7. Total Feedback that each agent have received
+hive> select agent_name,sum(total_feedback) as total_feedback from Agent_Performance group by agent_name order by agent_name limit 5 ;
+Query ID = cloudera_20221227110909_e8456284-509f-4d89-b1a0-bae153ad2863
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0013, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0013/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0013
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:09:24,836 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:09:31,363 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.52 sec
+2022-12-27 11:09:39,945 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.31 sec
+MapReduce Total cumulative CPU time: 3 seconds 310 msec
+Ended Job = job_1672165844887_0013
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0014, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0014/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0014
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:09:50,828 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:09:58,288 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.93 sec
+2022-12-27 11:10:07,784 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.79 sec
+MapReduce Total cumulative CPU time: 3 seconds 790 msec
+Ended Job = job_1672165844887_0014
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.31 sec   HDFS Read: 20316 HDFS Write: 2295 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.79 sec   HDFS Read: 7392 HDFS Write: 66 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 100 msec
+OK
+Abhishek        0
+Aditya  0
+Aditya Shinde   153
+Aditya_iot      131
+Amersh  0
+Time taken: 54.035 seconds, Fetched: 5 row(s)
+hive>
+
+8. Agent name who have average rating between 3.5 to 4
+
+select Agent_Name from 
+(select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name ) f
+where f.average_rating between 3.5 and 4 ;
+
+hive>  select Agent_Name from
+    > (select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name ) f
+    > where f.average_rating between 3.5 and 4 ;
+Query ID = cloudera_20221227111010_09cf36d6-8ff1-480f-9961-5c86b3259c16
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0015, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0015/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0015
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:10:43,216 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:10:49,615 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.54 sec
+2022-12-27 11:10:58,083 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.75 sec
+MapReduce Total cumulative CPU time: 3 seconds 750 msec
+Ended Job = job_1672165844887_0015
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0016, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0016/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0016
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:11:09,275 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:11:16,917 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.78 sec
+2022-12-27 11:11:27,549 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.73 sec
+MapReduce Total cumulative CPU time: 3 seconds 730 msec
+Ended Job = job_1672165844887_0016
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.75 sec   HDFS Read: 22454 HDFS Write: 227 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.73 sec   HDFS Read: 4542 HDFS Write: 63 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 480 msec
+OK
+Boktiar Ahmed Bappy
+Ishawant Kumar
+Khushboo Priya
+Manjunatha A
+Time taken: 53.395 seconds, Fetched: 4 row(s)
+hive>
+
+9. Agent name who have rating less than 3.5 
+
+hive> select Agent_Name from
+    > (select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name ) f
+    > where f.average_rating <3.5 limit 5;
+Query ID = cloudera_20221227111515_1158ccd6-e689-4fc1-908f-73d24a3ba72d
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0020, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0020/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0020
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:15:41,163 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:15:47,657 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.51 sec
+2022-12-27 11:15:57,178 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.63 sec
+MapReduce Total cumulative CPU time: 3 seconds 630 msec
+Ended Job = job_1672165844887_0020
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0021, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0021/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0021
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:16:06,796 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:16:13,303 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.86 sec
+2022-12-27 11:16:23,888 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.79 sec
+MapReduce Total cumulative CPU time: 3 seconds 790 msec
+Ended Job = job_1672165844887_0021
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.63 sec   HDFS Read: 22256 HDFS Write: 1986 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.79 sec   HDFS Read: 6423 HDFS Write: 52 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 420 msec
+OK
+Abhishek
+Aditya
+Aditya Shinde
+Aditya_iot
+Amersh
+Time taken: 51.549 seconds, Fetched: 5 row(s)
+hive>
+
+
+10. Agent name who have rating more than 4.5 
+hive> select Agent_Name from
+    > (select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name ) f
+    > where f.average_rating >4.5;
+Query ID = cloudera_20221227111818_c972bfef-b734-4f88-99af-ca21c18726ff
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0024, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0024/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0024
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:18:41,483 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:18:48,946 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.64 sec
+2022-12-27 11:18:58,662 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.87 sec
+MapReduce Total cumulative CPU time: 3 seconds 870 msec
+Ended Job = job_1672165844887_0024
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0025, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0025/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0025
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:19:07,747 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:19:16,431 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.99 sec
+2022-12-27 11:19:25,961 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.45 sec
+MapReduce Total cumulative CPU time: 3 seconds 450 msec
+Ended Job = job_1672165844887_0025
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.87 sec   HDFS Read: 22262 HDFS Write: 96 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.45 sec   HDFS Read: 4411 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 320 msec
+OK
+Time taken: 52.914 seconds
+hive>
+
+11. How many feedback agents have received more than 4.5 average
+
+hive> select count(Agent_Name) as Number_of_feedback_agents from
+    > (select Agent_Name,avg(Avg_Rating) as average_rating from Agent_Performance group by Agent_Name order by Agent_Name ) f
+    > where f.average_rating >4.5;
+Query ID = cloudera_20221227112020_0a6092be-e7a6-4323-bbc6-ca0b5645a00a
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0026, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0026/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0026
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:20:23,994 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:20:30,331 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.59 sec
+2022-12-27 11:20:38,781 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.7 sec
+MapReduce Total cumulative CPU time: 3 seconds 700 msec
+Ended Job = job_1672165844887_0026
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0027, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0027/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0027
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 11:20:48,905 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 11:20:57,526 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.7 sec
+2022-12-27 11:21:08,118 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.55 sec
+MapReduce Total cumulative CPU time: 3 seconds 550 msec
+Ended Job = job_1672165844887_0027
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.7 sec   HDFS Read: 22262 HDFS Write: 96 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 3.55 sec   HDFS Read: 4945 HDFS Write: 2 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 250 msec
+OK
+0
+Time taken: 53.475 seconds, Fetched: 1 row(s)
+hive>
+
+12. average weekly response time for each agent
+
+hive> select s.agent_name,avg(col1[0]*3600+col1[1]*60+col1[2])/3600 from ( select agent_name,split(avg_response_time,':') as col1 from agent_performance) s group by s.agent_name limit 5;
+Query ID = cloudera_20221227084040_c02af755-d99d-4b3d-a407-1d70520999eb
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672158121528_0002, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672158121528_0002/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672158121528_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 08:40:56,382 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 08:41:14,229 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.96 sec
+2022-12-27 08:41:27,007 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.52 sec
+MapReduce Total cumulative CPU time: 5 seconds 520 msec
+Ended Job = job_1672158121528_0002
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.52 sec   HDFS Read: 25184 HDFS Write: 105 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 520 msec
+OK
+s.agent_name    _c1
+Abhishek        0.0
+Aditya  0.0
+Aditya Shinde   0.00825925925925926
+Aditya_iot      0.009435185185185185
+Amersh  0.0
+Time taken: 44.245 seconds, Fetched: 5 row(s)
+hive>
+
+13. average weekly resolution time for each agents 
+
+hive> select s.agent_name,avg(col1[0]*3600+col1[1]*60+col1[2])/3600 from ( select agent_name,split(avg_resolution_time,':') as col1 from agent_performance) s group by s.agent_name limit 5;
+Query ID = cloudera_20221227084444_cdf3b795-4961-4ce4-beee-137286ee88a6
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672158121528_0003, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672158121528_0003/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672158121528_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 08:44:12,232 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 08:44:42,246 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.11 sec
+2022-12-27 08:44:59,292 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.67 sec
+MapReduce Total cumulative CPU time: 5 seconds 670 msec
+Ended Job = job_1672158121528_0003
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.67 sec   HDFS Read: 26752 HDFS Write: 104 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 670 msec
+OK
+s.agent_name    _c1
+Abhishek        0.0
+Aditya  0.0
+Aditya Shinde   0.17239814814814813
+Aditya_iot      0.16369444444444442
+Amersh  0.0
+Time taken: 58.194 seconds, Fetched: 5 row(s)
+hive>
+
+14. Find the number of chat on which they have received a feedback
+hive> select count(distinct Agent_Name) from Agent_Performance where Total_Feedback<>0;
+Query ID = cloudera_20221227111212_83a6e42c-e3fb-43e4-bb07-646de73e225a
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0017, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0017/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0017
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 11:12:40,509 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 11:12:47,077 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.07 sec
+2022-12-27 11:12:55,622 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.97 sec
+MapReduce Total cumulative CPU time: 3 seconds 970 msec
+Ended Job = job_1672165844887_0017
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.97 sec   HDFS Read: 21941 HDFS Write: 3 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 970 msec
+OK
+53
+Time taken: 26.065 seconds, Fetched: 1 row(s)
+hive>
+
+15. Total contribution hour for each and every agents weekly basis 
+
+hive> select s.agent_name,s.weekly,avg(col1[0]*3600+col1[1]*60+col1[2])/3600 from ( select agent_name,split(avg_resolution_time,':') as col1,weekofyear(dt) as weekly from agent_performance) s group by s.agent_name,s.weekly limit 5;
+Query ID = cloudera_20221227084949_738134f8-9344-4f49-a465-46c7207ced9f
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672158121528_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672158121528_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672158121528_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-12-27 08:49:20,545 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 08:49:39,748 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.04 sec
+2022-12-27 08:50:14,682 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.75 sec
+MapReduce Total cumulative CPU time: 5 seconds 750 msec
+Ended Job = job_1672158121528_0004
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.75 sec   HDFS Read: 27560 HDFS Write: 85 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 750 msec
+OK
+s.agent_name    s.weekly        _c2
+Abhishek        26      0.0
+Abhishek        27      0.0
+Abhishek        28      0.0
+Abhishek        29      0.0
+Abhishek        30      0.0
+Time taken: 71.757 seconds, Fetched: 5 row(s)
+hive>
+
+
+
+16. Perform inner join, left join and right join based on the agent column and after joining the table export that data into your local system
+
+hive> insert overwrite local directory '/home/cloudera/Hive-Mini_project_1' select a.*,b.* from agent_performance a inner join agent_logging_report b on a.agent_name=b.agent_name limit 10;
+Query ID = cloudera_20221227104646_46a01f30-e411-4768-83c4-930feadb67ee
+Total jobs = 1
+Execution log at: /tmp/cloudera/cloudera_20221227104646_46a01f30-e411-4768-83c4-930feadb67ee.log
+2022-12-27 10:46:49     Starting to launch local task to process map join;      maximum memory = 932184064
+2022-12-27 10:46:51     Dump the side-table for tag: 0 with group count: 70 into file: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-46-40_233_7362466905935724502-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile10--.hashtable
+2022-12-27 10:46:51     Uploaded 1 File to: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-46-40_233_7362466905935724502-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile10--.hashtable (73288 bytes)
+2022-12-27 10:46:51     End of local task; Time Taken: 2.228 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0002, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0002/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0002
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 10:47:03,781 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 10:47:14,908 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 3.18 sec
+2022-12-27 10:47:27,850 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 5.14 sec
+MapReduce Total cumulative CPU time: 5 seconds 140 msec
+Ended Job = job_1672165844887_0002
+Copying data to local directory /home/cloudera/Hive-Mini_project_1
+MapReduce Jobs Launched:
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 5.14 sec   HDFS Read: 77747 HDFS Write: 1183 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 140 msec
+OK
+Time taken: 50.167 seconds
+hive>
+
+
+[cloudera@quickstart Hive-Mini_project_1]$ ll
+total 4
+-rw-r--r-- 1 cloudera cloudera 1183 Dec 27 10:47 000000_0
+[cloudera@quickstart Hive-Mini_project_1]$ cat 000000_0
+7162022-07-21Shivananda Sonwane70:00:210:06:134.3361Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5772022-07-22Shivananda Sonwane160:01:050:25:284.4491Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5742022-07-23Shivananda Sonwane200:01:290:25:484.85131Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5012022-07-24Shivananda Sonwane80:01:080:21:414.251Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+3612022-07-25Shivananda Sonwane130:00:470:28:054.6281Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+3602022-07-26Shivananda Sonwane240:00:510:22:285.0141Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+2852022-07-27Shivananda Sonwane260:01:120:20:104.22181Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+2142022-07-28Shivananda Sonwane50:00:310:38:045.041Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+732022-07-29Shivananda Sonwane140:00:450:15:384.6791Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+692022-07-30Shivananda Sonwane40:01:140:16:535.011Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+[cloudera@quickstart Hive-Mini_project_1]$
+
+
+
+hive> insert overwrite local directory '/home/cloudera/Hive-Mini_project_1/left_join' select a.*,b.* from agent_performance a left join agent_logging_report b on a.agent_name=b.agent_name limit 10;
+Query ID = cloudera_20221227105252_285f56d9-0a70-456d-96d7-fad30f243836
+Total jobs = 1
+Execution log at: /tmp/cloudera/cloudera_20221227105252_285f56d9-0a70-456d-96d7-fad30f243836.log
+2022-12-27 10:53:05     Starting to launch local task to process map join;      maximum memory = 932184064
+2022-12-27 10:53:08     Dump the side-table for tag: 1 with group count: 49 into file: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-52-52_138_4109455671999922497-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile21--.hashtable
+2022-12-27 10:53:08     Uploaded 1 File to: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-52-52_138_4109455671999922497-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile21--.hashtable (39342 bytes)
+2022-12-27 10:53:08     End of local task; Time Taken: 2.998 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0003, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0003/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0003
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 10:53:27,417 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 10:53:48,113 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 2.69 sec
+2022-12-27 10:54:02,134 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.92 sec
+MapReduce Total cumulative CPU time: 4 seconds 920 msec
+Ended Job = job_1672165844887_0003
+Copying data to local directory /home/cloudera/Hive-Mini_project_1/left_join
+MapReduce Jobs Launched:
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.92 sec   HDFS Read: 35585 HDFS Write: 1067 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 920 msec
+OK
+Time taken: 72.523 seconds
+hive>
+ 
+ 
+ 
+[cloudera@quickstart left_join]$ ll
+total 4
+-rw-r--r-- 1 cloudera cloudera 1067 Dec 27 10:54 000000_0
+[cloudera@quickstart left_join]$ cat 000000_0
+12022-07-30Prerna Singh110:00:380:04:204.119427Prerna Singh2022-07-2615:05:3021:02:0805:56:38
+12022-07-30Prerna Singh110:00:380:04:204.119426Prerna Singh2022-07-2615:05:3015:07:2700:01:56
+12022-07-30Prerna Singh110:00:380:04:204.119393Prerna Singh2022-07-2621:25:2721:33:5700:08:30
+12022-07-30Prerna Singh110:00:380:04:204.119391Prerna Singh2022-07-2621:55:5122:03:2100:07:29
+12022-07-30Prerna Singh110:00:380:04:204.119388Prerna Singh2022-07-2622:17:5622:19:5600:02:00
+12022-07-30Prerna Singh110:00:380:04:204.119336Prerna Singh2022-07-2713:11:0620:58:3507:47:29
+12022-07-30Prerna Singh110:00:380:04:204.119110Prerna Singh2022-07-2912:08:2312:11:3500:03:11
+12022-07-30Prerna Singh110:00:380:04:204.11991Prerna Singh2022-07-2915:08:2217:20:4902:12:27
+12022-07-30Prerna Singh110:00:380:04:204.11975Prerna Singh2022-07-2917:47:0621:03:4403:16:37
+12022-07-30Prerna Singh110:00:380:04:204.11916Prerna Singh2022-07-3012:32:2814:10:0801:37:40
+[cloudera@quickstart left_join]$
+
+
+
+hive> insert overwrite local directory '/home/cloudera/Hive-Mini_project_1/right_join' select a.*,b.* from agent_performance a right join agent_logging_report b on a.agent_name=b.agent_name limit 10;
+Query ID = cloudera_20221227105656_9a5c81d2-cb72-4e5c-beb3-c1e0ca5ec2a1
+Total jobs = 1
+Execution log at: /tmp/cloudera/cloudera_20221227105656_9a5c81d2-cb72-4e5c-beb3-c1e0ca5ec2a1.log
+2022-12-27 10:56:20     Starting to launch local task to process map join;      maximum memory = 932184064
+2022-12-27 10:56:21     Dump the side-table for tag: 0 with group count: 70 into file: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-56-12_457_535155511605267043-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile30--.hashtable
+2022-12-27 10:56:21     Uploaded 1 File to: file:/tmp/cloudera/d95796d0-e961-4199-a175-f525b960d745/hive_2022-12-27_10-56-12_457_535155511605267043-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile30--.hashtable (73288 bytes)
+2022-12-27 10:56:21     End of local task; Time Taken: 1.451 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1672165844887_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672165844887_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672165844887_0004
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-12-27 10:56:31,923 Stage-2 map = 0%,  reduce = 0%
+2022-12-27 10:56:50,014 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 2.82 sec
+2022-12-27 10:57:06,801 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.75 sec
+MapReduce Total cumulative CPU time: 4 seconds 750 msec
+Ended Job = job_1672165844887_0004
+Copying data to local directory /home/cloudera/Hive-Mini_project_1/right_join
+MapReduce Jobs Launched:
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.75 sec   HDFS Read: 77435 HDFS Write: 1183 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 750 msec
+OK
+Time taken: 56.707 seconds
+hive>
+
+
+
+[cloudera@quickstart Hive-Mini_project_1]$ cd right_join/
+[cloudera@quickstart right_join]$ ll
+total 4
+-rw-r--r-- 1 cloudera cloudera 1183 Dec 27 10:57 000000_0
+[cloudera@quickstart right_join]$ cat 000000_0
+7162022-07-21Shivananda Sonwane70:00:210:06:134.3361Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5772022-07-22Shivananda Sonwane160:01:050:25:284.4491Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5742022-07-23Shivananda Sonwane200:01:290:25:484.85131Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+5012022-07-24Shivananda Sonwane80:01:080:21:414.251Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+3612022-07-25Shivananda Sonwane130:00:470:28:054.6281Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+3602022-07-26Shivananda Sonwane240:00:510:22:285.0141Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+2852022-07-27Shivananda Sonwane260:01:120:20:104.22181Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+2142022-07-28Shivananda Sonwane50:00:310:38:045.041Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+732022-07-29Shivananda Sonwane140:00:450:15:384.6791Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+692022-07-30Shivananda Sonwane40:01:140:16:535.011Shivananda Sonwane2022-07-3015:35:2917:39:3902:04:10
+[cloudera@quickstart right_join]$
+
+17. Perform partitioning on top of the agent column and then on top of that perform bucketing for each partitioning.
+
+hive> create table agent_logging_report_partition(
+    > sl_no int,
+    > agent_name string,
+    > dt date,
+    > login_time string,
+    > logout_time string,
+    > duration string
+    > )
+    > partitioned by (agent_name string);
+FAILED: SemanticException [Error 10035]: Column repeated in partitioning columns
+hive> create table agent_logging_report_partition(sl_no int, dt date,login_time string,logout_time string,duration string) partitioned by (agent_name string);
+OK
+Time taken: 4.257 seconds
+hive> insert overwrite table agent_logging_report_partition partition(agent_name) select sl_no,dt,login_time,logout_time,duration,agent_name from agent_logging_report;
+FAILED: SemanticException [Error 10096]: Dynamic partition strict mode requires at least one static partition column. To turn this off set hive.exec.dynamic.partition.mode=nonstrict
+hive> set hive.exec.dynamic.partition.mode=nonstrict
+    > ;
+hive> insert overwrite table agent_logging_report_partition partition(agent_name) select sl_no,dt,login_time,logout_time,duration,agent_name from agent_logging_report;
+Query ID = cloudera_20221227101111_78b9a968-18ad-47d9-aac8-b53f4d8bc0c3
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1672163867306_0001, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672163867306_0001/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672163867306_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-12-27 10:12:47,580 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 10:13:31,069 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 6.09 sec
+MapReduce Total cumulative CPU time: 7 seconds 90 msec
+Ended Job = job_1672163867306_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/project.db/agent_logging_report_partition/.hive-staging_hive_2022-12-27_10-11-49_626_3123865285853982195-1/-ext-10000
+Loading data to table project.agent_logging_report_partition partition (agent_name=null)
+         Time taken for load dynamic partitions : 20240
+        Loading partition {agent_name=Hrisikesh Neogi}
+        Loading partition {agent_name=Sudhanshu Kumar}
+        Loading partition {agent_name=Suraj S Bilgi}
+        Loading partition {agent_name=Sanjeev Kumar}
+        Loading partition {agent_name=Wasim}
+        Loading partition {agent_name=Nitin M}
+        Loading partition {agent_name=Ankitjha}
+        Loading partition {agent_name=Zeeshan}
+        Loading partition {agent_name=Aditya Shinde}
+        Loading partition {agent_name=Deepranjan Gupta}
+        Loading partition {agent_name=Muskan Garg}
+        Loading partition {agent_name=Sowmiya Sivakumar}
+        Loading partition {agent_name=Shiva Srivastava}
+        Loading partition {agent_name=Shivananda Sonwane}
+        Loading partition {agent_name=Shubham Sharma}
+        Loading partition {agent_name=Madhulika G}
+        Loading partition {agent_name=Aditya_iot}
+        Loading partition {agent_name=Prerna Singh}
+        Loading partition {agent_name=Amersh}
+        Loading partition {agent_name=Mahesh Sarade}
+        Loading partition {agent_name=Bharath}
+        Loading partition {agent_name=Harikrishnan Shaji}
+        Loading partition {agent_name=Mukesh}
+        Loading partition {agent_name=Swati}
+        Loading partition {agent_name=Prateek _iot}
+        Loading partition {agent_name=Rishav Dash}
+        Loading partition {agent_name=Hyder Abbas}
+        Loading partition {agent_name=Manjunatha A}
+        Loading partition {agent_name=Mithun S}
+        Loading partition {agent_name=Ayushi Mishra}
+        Loading partition {agent_name=Ishawant Kumar}
+        Loading partition {agent_name=Ineuron Intelligence}
+        Loading partition {agent_name=Saurabh Shukla}
+        Loading partition {agent_name=Ameya Jain}
+        Loading partition {agent_name=Boktiar Ahmed Bappy}
+        Loading partition {agent_name=Tarun}
+        Loading partition {agent_name=Shivan K}
+        Loading partition {agent_name=Jawala Prakash}
+        Loading partition {agent_name=Jaydeep Dixit}
+        Loading partition {agent_name=Nishtha Jain}
+        Loading partition {agent_name=Aravind}
+        Loading partition {agent_name=Dibyanshu}
+        Loading partition {agent_name=Khushboo Priya}
+        Loading partition {agent_name=Prabir Kumar Satapathy}
+        Loading partition {agent_name=Saikumarreddy N}
+        Loading partition {agent_name=Maitry}
+        Loading partition {agent_name=Nandani Gupta}
+        Loading partition {agent_name=Chaitra K Hiremath}
+        Loading partition {agent_name=Anurag Tiwari}
+         Time taken for adding to write entity : 39
+Partition project.agent_logging_report_partition{agent_name=Aditya Shinde} stats: [numFiles=1, numRows=1, totalSize=42, rawDataSize=41]
+Partition project.agent_logging_report_partition{agent_name=Aditya_iot} stats: [numFiles=1, numRows=9, totalSize=377, rawDataSize=368]
+Partition project.agent_logging_report_partition{agent_name=Amersh} stats: [numFiles=1, numRows=4, totalSize=168, rawDataSize=164]
+Partition project.agent_logging_report_partition{agent_name=Ameya Jain} stats: [numFiles=1, numRows=10, totalSize=420, rawDataSize=410]
+Partition project.agent_logging_report_partition{agent_name=Ankitjha} stats: [numFiles=1, numRows=4, totalSize=168, rawDataSize=164]
+Partition project.agent_logging_report_partition{agent_name=Anurag Tiwari} stats: [numFiles=1, numRows=37, totalSize=1553, rawDataSize=1516]
+Partition project.agent_logging_report_partition{agent_name=Aravind} stats: [numFiles=1, numRows=10, totalSize=420, rawDataSize=410]
+Partition project.agent_logging_report_partition{agent_name=Ayushi Mishra} stats: [numFiles=1, numRows=18, totalSize=755, rawDataSize=737]
+Partition project.agent_logging_report_partition{agent_name=Bharath} stats: [numFiles=1, numRows=9, totalSize=378, rawDataSize=369]
+Partition project.agent_logging_report_partition{agent_name=Boktiar Ahmed Bappy} stats: [numFiles=1, numRows=17, totalSize=709, rawDataSize=692]
+Partition project.agent_logging_report_partition{agent_name=Chaitra K Hiremath} stats: [numFiles=1, numRows=13, totalSize=543, rawDataSize=530]
+Partition project.agent_logging_report_partition{agent_name=Deepranjan Gupta} stats: [numFiles=1, numRows=58, totalSize=2433, rawDataSize=2375]
+Partition project.agent_logging_report_partition{agent_name=Dibyanshu} stats: [numFiles=1, numRows=208, totalSize=8719, rawDataSize=8511]
+Partition project.agent_logging_report_partition{agent_name=Harikrishnan Shaji} stats: [numFiles=1, numRows=23, totalSize=963, rawDataSize=940]
+Partition project.agent_logging_report_partition{agent_name=Hrisikesh Neogi} stats: [numFiles=1, numRows=37, totalSize=1544, rawDataSize=1507]
+Partition project.agent_logging_report_partition{agent_name=Hyder Abbas} stats: [numFiles=1, numRows=2, totalSize=84, rawDataSize=82]
+Partition project.agent_logging_report_partition{agent_name=Ineuron Intelligence} stats: [numFiles=1, numRows=1, totalSize=42, rawDataSize=41]
+Partition project.agent_logging_report_partition{agent_name=Ishawant Kumar} stats: [numFiles=1, numRows=49, totalSize=2052, rawDataSize=2003]
+Partition project.agent_logging_report_partition{agent_name=Jawala Prakash} stats: [numFiles=1, numRows=16, totalSize=668, rawDataSize=652]
+Partition project.agent_logging_report_partition{agent_name=Jaydeep Dixit} stats: [numFiles=1, numRows=11, totalSize=459, rawDataSize=448]
+Partition project.agent_logging_report_partition{agent_name=Khushboo Priya} stats: [numFiles=1, numRows=18, totalSize=752, rawDataSize=734]
+Partition project.agent_logging_report_partition{agent_name=Madhulika G} stats: [numFiles=1, numRows=17, totalSize=713, rawDataSize=696]
+Partition project.agent_logging_report_partition{agent_name=Mahesh Sarade} stats: [numFiles=1, numRows=36, totalSize=1509, rawDataSize=1473]
+Partition project.agent_logging_report_partition{agent_name=Maitry} stats: [numFiles=1, numRows=5, totalSize=210, rawDataSize=205]
+Partition project.agent_logging_report_partition{agent_name=Manjunatha A} stats: [numFiles=1, numRows=8, totalSize=333, rawDataSize=325]
+Partition project.agent_logging_report_partition{agent_name=Mithun S} stats: [numFiles=1, numRows=14, totalSize=586, rawDataSize=572]
+Partition project.agent_logging_report_partition{agent_name=Mukesh} stats: [numFiles=1, numRows=3, totalSize=124, rawDataSize=121]
+Partition project.agent_logging_report_partition{agent_name=Muskan Garg} stats: [numFiles=1, numRows=12, totalSize=503, rawDataSize=491]
+Partition project.agent_logging_report_partition{agent_name=Nandani Gupta} stats: [numFiles=1, numRows=11, totalSize=458, rawDataSize=447]
+Partition project.agent_logging_report_partition{agent_name=Nishtha Jain} stats: [numFiles=1, numRows=18, totalSize=754, rawDataSize=736]
+Partition project.agent_logging_report_partition{agent_name=Nitin M} stats: [numFiles=1, numRows=1, totalSize=42, rawDataSize=41]
+Partition project.agent_logging_report_partition{agent_name=Prabir Kumar Satapathy} stats: [numFiles=1, numRows=26, totalSize=1091, rawDataSize=1065]
+Partition project.agent_logging_report_partition{agent_name=Prateek _iot} stats: [numFiles=1, numRows=17, totalSize=711, rawDataSize=694]
+Partition project.agent_logging_report_partition{agent_name=Prerna Singh} stats: [numFiles=1, numRows=18, totalSize=753, rawDataSize=735]
+Partition project.agent_logging_report_partition{agent_name=Rishav Dash} stats: [numFiles=1, numRows=12, totalSize=504, rawDataSize=492]
+Partition project.agent_logging_report_partition{agent_name=Saikumarreddy N} stats: [numFiles=1, numRows=10, totalSize=420, rawDataSize=410]
+Partition project.agent_logging_report_partition{agent_name=Sanjeev Kumar} stats: [numFiles=1, numRows=20, totalSize=839, rawDataSize=819]
+Partition project.agent_logging_report_partition{agent_name=Saurabh Shukla} stats: [numFiles=1, numRows=40, totalSize=1680, rawDataSize=1640]
+Partition project.agent_logging_report_partition{agent_name=Shiva Srivastava} stats: [numFiles=1, numRows=15, totalSize=629, rawDataSize=614]
+Partition project.agent_logging_report_partition{agent_name=Shivan K} stats: [numFiles=1, numRows=36, totalSize=1506, rawDataSize=1470]
+Partition project.agent_logging_report_partition{agent_name=Shivananda Sonwane} stats: [numFiles=1, numRows=15, totalSize=625, rawDataSize=610]
+Partition project.agent_logging_report_partition{agent_name=Shubham Sharma} stats: [numFiles=1, numRows=35, totalSize=1469, rawDataSize=1434]
+Partition project.agent_logging_report_partition{agent_name=Sowmiya Sivakumar} stats: [numFiles=1, numRows=24, totalSize=1005, rawDataSize=981]
+Partition project.agent_logging_report_partition{agent_name=Sudhanshu Kumar} stats: [numFiles=1, numRows=11, totalSize=462, rawDataSize=451]
+Partition project.agent_logging_report_partition{agent_name=Suraj S Bilgi} stats: [numFiles=1, numRows=5, totalSize=206, rawDataSize=201]
+Partition project.agent_logging_report_partition{agent_name=Swati} stats: [numFiles=1, numRows=5, totalSize=210, rawDataSize=205]
+Partition project.agent_logging_report_partition{agent_name=Tarun} stats: [numFiles=1, numRows=1, totalSize=44, rawDataSize=43]
+Partition project.agent_logging_report_partition{agent_name=Wasim} stats: [numFiles=1, numRows=20, totalSize=840, rawDataSize=820]
+Partition project.agent_logging_report_partition{agent_name=Zeeshan} stats: [numFiles=1, numRows=10, totalSize=419, rawDataSize=409]
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1   Cumulative CPU: 7.09 sec   HDFS Read: 65310 HDFS Write: 46006 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 90 msec
+OK
+Time taken: 146.895 seconds
+hive>
+
+
+hive> create table agent_logging_report_clustered(
+    > sl_no int,
+    > dt date,
+    > login_time string,
+    > logout_time string,
+    > duration string,
+    > agent_name string)
+    > clustered by (agent_name)
+    > sorted by (agent_name)
+    > into 2 buckets;
+OK
+Time taken: 0.205 seconds
+hive> insert overwrite table agent_logging_report_clustered select * from agent_logging_report_partition;
+Query ID = cloudera_20221227101919_75d743af-fe5f-4f45-91a3-a81054a736bd
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1672163867306_0002, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1672163867306_0002/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1672163867306_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2022-12-27 10:19:53,097 Stage-1 map = 0%,  reduce = 0%
+2022-12-27 10:20:36,053 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.15 sec
+MapReduce Total cumulative CPU time: 4 seconds 150 msec
+Ended Job = job_1672163867306_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/project.db/agent_logging_report_clustered/.hive-staging_hive_2022-12-27_10-19-36_786_8456019517185438047-1/-ext-10000
+Loading data to table project.agent_logging_report_clustered
+Table project.agent_logging_report_clustered stats: [numFiles=1, numRows=1000, totalSize=55303, rawDataSize=54303]
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.15 sec   HDFS Read: 70440 HDFS Write: 55402 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 150 msec
+OK
+Time taken: 62.321 seconds
+hive>
