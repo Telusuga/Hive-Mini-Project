@@ -1,0 +1,730 @@
+In this mini-project I had to use only few records as the file size is so huge and unable to load in Neuro-lab
+
+
+
+1.) How often does each violation code occur? (frequency of violation codes - find the top 5)
+select violation_code,count(*) as number_of_tickets from parking_landing_1 group by violation_code order by 2 desc limit 5;
+
+hive> select violation_code,count(*) as number_of_tickets from parking_landing_1 group by violation_code order by 2 desc limit 5;
+Query ID = abc_20230215092440_edb60d34-90f3-454e-9cf1-144f92f12f99
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0004, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0004/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-15 09:24:50,519 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 09:24:57,670 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.35 sec
+2023-02-15 09:25:02,787 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.82 sec
+MapReduce Total cumulative CPU time: 4 seconds 820 msec
+Ended Job = job_1676432970336_0004
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0005, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0005/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0005
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-15 09:25:16,967 Stage-2 map = 0%,  reduce = 0%
+2023-02-15 09:25:24,149 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.95 sec
+2023-02-15 09:25:30,288 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.13 sec
+MapReduce Total cumulative CPU time: 4 seconds 130 msec
+Ended Job = job_1676432970336_0005
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.82 sec   HDFS Read: 446660 HDFS Write: 364 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.13 sec   HDFS Read: 7916 HDFS Write: 175 SUCCESS
+Total MapReduce CPU Time Spent: 8 seconds 950 msec
+OK
+violation_code  number_of_tickets
+21      2260
+14      8
+40      7
+41      6
+98      6
+Time taken: 50.761 seconds, Fetched: 5 row(s)
+hive> 
+
+2.) How often does each vehicle body type get a parking ticket? How about the vehicle make? (find the top 5 for both)
+select vehicle_body_type,vehicle_make,count(*) from parking_landing_1 group by 1,2 order by 3 desc limit 5;
+
+hive> select vehicle_body_type,vehicle_make,count(*) from parking_landing_1 group by 1,2 order by 3 desc limit 5;
+Query ID = abc_20230215092726_a6c51f1c-ccf5-49b1-b298-e0a395914d77
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0006, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0006/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0006
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-15 09:27:36,139 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 09:27:43,293 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.63 sec
+2023-02-15 09:27:48,414 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.86 sec
+MapReduce Total cumulative CPU time: 4 seconds 860 msec
+Ended Job = job_1676432970336_0006
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0007, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0007/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0007
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-15 09:28:02,633 Stage-2 map = 0%,  reduce = 0%
+2023-02-15 09:28:09,790 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.84 sec
+2023-02-15 09:28:15,924 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.34 sec
+MapReduce Total cumulative CPU time: 4 seconds 340 msec
+Ended Job = job_1676432970336_0007
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.86 sec   HDFS Read: 447174 HDFS Write: 4616 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.34 sec   HDFS Read: 12670 HDFS Write: 218 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 200 msec
+OK
+vehicle_body_type       vehicle_make    _c2
+SDN     HONDA   184
+SDN     NISSA   169
+SDN     TOYOT   141
+SUBN    HONDA   110
+SUBN    TOYOT   98
+Time taken: 50.727 seconds, Fetched: 5 row(s)
+hive> 
+
+3.) A precinct is a police station that has a certain zone of the city under its command. Find the (5 highest) frequencies of:
+      a.) Violating Precincts (this is the precinct of the zone where the violation occurred)
+	  select violation_precinct,count(*) from parking_landing_1 group by 1 order by 2 desc limit 5;
+	  
+	  hive> select violation_precinct,count(*) from parking_landing_1 group by 1 order by 2 desc limit 5;
+Query ID = abc_20230215092949_7d036072-648f-46ab-be80-dbd678a4f04d
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0008, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0008/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0008
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-15 09:29:57,816 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 09:30:04,964 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.45 sec
+2023-02-15 09:30:11,098 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.63 sec
+MapReduce Total cumulative CPU time: 4 seconds 630 msec
+Ended Job = job_1676432970336_0008
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0009, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0009/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0009
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-15 09:30:24,220 Stage-2 map = 0%,  reduce = 0%
+2023-02-15 09:30:31,382 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.91 sec
+2023-02-15 09:30:37,511 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.09 sec
+MapReduce Total cumulative CPU time: 4 seconds 90 msec
+Ended Job = job_1676432970336_0009
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.63 sec   HDFS Read: 446664 HDFS Write: 923 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.09 sec   HDFS Read: 8473 HDFS Write: 182 SUCCESS
+Total MapReduce CPU Time Spent: 8 seconds 720 msec
+OK
+violation_precinct      _c1
+83      311
+79      263
+77      250
+71      226
+75      208
+Time taken: 49.243 seconds, Fetched: 5 row(s)
+hive> 
+
+      b.) Issuer Precincts (this is the precinct that issued the ticket)
+	  >select issuer_precinct,count(*) from parking_landing_1 group by 1 order by 2 desc limit 5
+	  
+	  hive> select issuer_precinct,count(*) from parking_landing_1 group by 1 order by 2 desc limit 5
+    > ;
+Query ID = abc_20230215093110_5cda7b98-b387-4a7d-841d-f1d0dec2a524
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0010, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0010/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0010
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-15 09:31:19,864 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 09:31:28,041 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.76 sec
+2023-02-15 09:31:34,170 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.87 sec
+MapReduce Total cumulative CPU time: 4 seconds 870 msec
+Ended Job = job_1676432970336_0010
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676432970336_0011, Tracking URL = http://c01a90b5ff78:8088/proxy/application_1676432970336_0011/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676432970336_0011
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-15 09:31:47,867 Stage-2 map = 0%,  reduce = 0%
+2023-02-15 09:31:55,019 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.95 sec
+2023-02-15 09:32:01,159 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.25 sec
+MapReduce Total cumulative CPU time: 4 seconds 250 msec
+Ended Job = job_1676432970336_0011
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.87 sec   HDFS Read: 446662 HDFS Write: 290 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.25 sec   HDFS Read: 7841 HDFS Write: 176 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 120 msec
+OK
+issuer_precinct _c1
+0       2288
+105     4
+42      4
+44      3
+102     2
+Time taken: 51.633 seconds, Fetched: 5 row(s)
+hive> 
+
+4.) Find the violation code frequency across 3 precincts which have issued the most number of tickets - do these precinct zones have an exceptionally high frequency of certain violation codes?
+
+select f.violation_code,COUNT(*) 
+from
+(select 
+a.*
+from
+parking_landing_1 a 
+inner join (
+select issuer_precinct,count(*) from parking_landing_1 group by issuer_precinct order by 2 desc limit 3
+) b
+on a.issuer_precinct=b.issuer_precinct) f
+group by f.violation_code;
+
+
+hive> select f.violation_code,COUNT(*)
+    > from
+    > (select
+    > a.*
+    > from
+    > parking_landing_1 a
+    > inner join (
+    > select issuer_precinct,count(*) from parking_landing_1 group by issuer_precinct order by 2 desc limit 3
+    > ) b
+    > on a.issuer_precinct=b.issuer_precinct) f
+    > group by f.violation_code;
+Query ID = cloudera_20230214205757_577f4cb1-9a79-4ab4-9ff2-871d300ef17f
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676435838091_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1676435838091_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1676435838091_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-14 20:57:36,908 Stage-1 map = 0%,  reduce = 0%
+2023-02-14 20:57:46,349 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.53 sec
+2023-02-14 20:57:55,623 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.79 sec
+MapReduce Total cumulative CPU time: 2 seconds 790 msec
+Ended Job = job_1676435838091_0004
+Launching Job 2 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676435838091_0005, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1676435838091_0005/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1676435838091_0005
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-14 20:58:05,420 Stage-2 map = 0%,  reduce = 0%
+2023-02-14 20:58:13,040 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.25 sec
+2023-02-14 20:58:21,328 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 2.49 sec
+MapReduce Total cumulative CPU time: 2 seconds 490 msec
+Ended Job = job_1676435838091_0005
+Execution log at: /tmp/cloudera/cloudera_20230214205757_577f4cb1-9a79-4ab4-9ff2-871d300ef17f.log
+2023-02-14 08:58:29     Starting to launch local task to process map join;      maximum memory = 932184064
+2023-02-14 08:58:32     Dump the side-table for tag: 0 with group count: 10 into file: file:/tmp/cloudera/c48348c1-f26b-4bee-975c-2ad175aa2f7e/hive_2023-02-14_20-57-30_755_1378188604182986619-1/-local-10006/HashTable-Stage-4/MapJoin-mapfile10--.hashtable
+2023-02-14 08:58:32     Uploaded 1 File to: file:/tmp/cloudera/c48348c1-f26b-4bee-975c-2ad175aa2f7e/hive_2023-02-14_20-57-30_755_1378188604182986619-1/-local-10006/HashTable-Stage-4/MapJoin-mapfile10--.hashtable (14312 bytes)
+2023-02-14 08:58:32     End of local task; Time Taken: 2.681 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 3 out of 3
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676435838091_0006, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1676435838091_0006/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1676435838091_0006
+Hadoop job information for Stage-4: number of mappers: 1; number of reducers: 1
+2023-02-14 20:58:39,574 Stage-4 map = 0%,  reduce = 0%
+2023-02-14 20:58:47,782 Stage-4 map = 100%,  reduce = 0%, Cumulative CPU 1.21 sec
+2023-02-14 20:58:56,193 Stage-4 map = 100%,  reduce = 100%, Cumulative CPU 2.28 sec
+MapReduce Total cumulative CPU time: 2 seconds 280 msec
+Ended Job = job_1676435838091_0006
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.79 sec   HDFS Read: 437351 HDFS Write: 295 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 2.49 sec   HDFS Read: 4338 HDFS Write: 152 SUCCESS
+Stage-Stage-4: Map: 1  Reduce: 1   Cumulative CPU: 2.28 sec   HDFS Read: 11475 HDFS Write: 25 SUCCESS
+Total MapReduce CPU Time Spent: 7 seconds 560 msec
+OK
+f.violation_code        _c1
+21      1
+40      1
+46      1
+50      1
+98      3
+Time taken: 86.563 seconds, Fetched: 5 row(s)
+hive>
+
+5.) Find out the properties of parking violations across different times of the day: The Violation Time field is specified in a strange format. Find a way to make this into a time attribute that you can use to divide into groups.
+
+hive> create table parking_2 as
+    > select
+    > plate_id,registration_state,plate_type,from_unixtime(unix_timestamp(issue_date,'mm/dd/yyyy'),'yyyy-mm-dd') as convert,violation_code,vehicle_body_type,vehicle_make,issuing_agency,concat(substring(violation_time,1,2),':',substring(violation_time,3,2),' ',substring(violation_time,5,1),'M') as time_of_violation
+    > from parking_landing_1;
+Query ID = abc_20230215234556_5bbb79b9-d764-45a4-b81d-00bbe326209c
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1676484764582_0001, Tracking URL = http://62db46851618:8088/proxy/application_1676484764582_0001/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676484764582_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-15 23:46:10,563 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 23:46:18,811 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.8 sec
+MapReduce Total cumulative CPU time: 4 seconds 800 msec
+Ended Job = job_1676484764582_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/.hive-staging_hive_2023-02-15_23-45-56_608_6966505158326235803-1/-ext-10002
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/parking_2
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.8 sec   HDFS Read: 436098 HDFS Write: 115371 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 800 msec
+OK
+plate_id        registration_state      plate_type      convert violation_code  vehicle_body_type       vehicle_make    issuing_agency  time_of_violation
+Time taken: 24.677 seconds
+hive> select * from parking_2 limit 5;
+OK
+parking_2.plate_id      parking_2.registration_state    parking_2.plate_type    parking_2.convert       parking_2.violation_code        parking_2.vehicle_body_type     parking_2.vehicle_make  parking_2.issuing_agency parking_2.time_of_violation
+HCP7926 NY      PAS     2018-07-16      21      SDN     ME/BE   S       07:53 AM
+HSZ2472 NY      PAS     2018-07-13      21      SUBN    ME/BE   S       11:57 AM
+HYJ1988 NY      PAS     2018-07-13      21      SUBN    HONDA   S       12:05 PM
+HNV6246 NY      PAS     2018-07-13      21      SUBN    TOYOT   S       09:16 AM
+HWG4025 NY      PAS     2018-07-13      21      SUBN    HYUND   S       09:18 AM
+Time taken: 0.234 seconds, Fetched: 5 row(s)
+hive> create table parking_3 
+    > as
+    > select 
+    > plate_id,
+    > registration_state,
+    > plate_type,
+    > convert as issuing_date,
+    > violation_code,
+    > vehicle_body_type,
+    > vehicle_make,
+    > issuing_agency,
+    > case when substring(time_of_violation, -2)='PM' and substring(time_of_violation,1,2)!='12' 
+    > then cast(cast(substring(time_of_violation,1,2) as int)+12 as string) || ':' || substring(time_of_violation,4,2)
+    > when substring(time_of_violation, -2)='AM' and substring(time_of_violation,1,2)=12 
+    > then replace(time_of_violation,'12','00') 
+    > else substring(time_of_violation,1,5)
+    > end as violation_time
+    > from parking_2;
+Query ID = abc_20230215234737_577ca53d-5ce6-42ee-a11c-1c07ce12d5e9
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1676484764582_0002, Tracking URL = http://62db46851618:8088/proxy/application_1676484764582_0002/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676484764582_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-15 23:47:47,785 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 23:47:55,991 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.35 sec
+MapReduce Total cumulative CPU time: 4 seconds 350 msec
+Ended Job = job_1676484764582_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/.hive-staging_hive_2023-02-15_23-47-37_124_2410761685085638015-1/-ext-10002
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/parking_3
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.35 sec   HDFS Read: 125243 HDFS Write: 108525 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 350 msec
+OK
+plate_id        registration_state      plate_type      issuing_date    violation_code  vehicle_body_type       vehicle_make    issuing_agency  violation_time
+Time taken: 20.154 seconds
+hive> select * from parking_3 limit 5;
+OK
+parking_3.plate_id      parking_3.registration_state    parking_3.plate_type    parking_3.issuing_date  parking_3.violation_code        parking_3.vehicle_body_type     parking_3.vehicle_make  parking_3.issuing_agency parking_3.violation_time
+HCP7926 NY      PAS     2018-07-16      21      SDN     ME/BE   S       07:53
+HSZ2472 NY      PAS     2018-07-13      21      SUBN    ME/BE   S       11:57
+HYJ1988 NY      PAS     2018-07-13      21      SUBN    HONDA   S       12:05
+HNV6246 NY      PAS     2018-07-13      21      SUBN    TOYOT   S       09:16
+HWG4025 NY      PAS     2018-07-13      21      SUBN    HYUND   S       09:18
+Time taken: 0.185 seconds, Fetched: 5 row(s)
+hive> 
+
+6.) Divide 24 hours into 6 equal discrete bins of time. The intervals you choose are at your discretion. For each of these groups, find the 3 most commonly occurring violations
+hive> create table parking_time_vioaltion
+    > as
+    > select 
+    > plate_id,
+    > registration_state,
+    > plate_type,
+    > issuing_date,
+    > violation_code,
+    > vehicle_body_type,
+    > vehicle_make,
+    > issuing_agency,
+    > case when substring(violation_time,1,2)='00' then '1'
+    > when substring(violation_time,1,2)='01' then '1'
+    > when substring(violation_time,1,2)='02' then '1'
+    > when substring(violation_time,1,2)='03' then '1'
+    > when substring(violation_time,1,2)='04' then '2'
+    > when substring(violation_time,1,2)='05' then '2'
+    > when substring(violation_time,1,2)='06' then '2'
+    > when substring(violation_time,1,2)='07' then '2'
+    > when substring(violation_time,1,2)='08' then '3'
+    > when substring(violation_time,1,2)='09' then '3'
+    > when substring(violation_time,1,2)='10' then '3'
+    > when substring(violation_time,1,2)='11' then '3'
+    > when substring(violation_time,1,2)='12' then '4'
+    > when substring(violation_time,1,2)='13' then '4'
+    > when substring(violation_time,1,2)='14' then '4'
+    > when substring(violation_time,1,2)='15' then '4'
+    > when substring(violation_time,1,2)='16' then '5'
+    > when substring(violation_time,1,2)='17' then '5'
+    > when substring(violation_time,1,2)='18' then '5'
+    > when substring(violation_time,1,2)='19' then '5'
+    > when substring(violation_time,1,2)='20' then '6'
+    > when substring(violation_time,1,2)='21' then '6'
+    > when substring(violation_time,1,2)='22' then '6'
+    > when substring(violation_time,1,2)='23' then '6'
+    > end as segments
+    > from parking_3;
+Query ID = abc_20230215234912_bc105827-ca1e-4b6f-9233-59b0fae1b9ca
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1676484764582_0003, Tracking URL = http://62db46851618:8088/proxy/application_1676484764582_0003/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676484764582_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-15 23:49:21,437 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 23:49:29,637 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.15 sec
+MapReduce Total cumulative CPU time: 3 seconds 150 msec
+Ended Job = job_1676484764582_0003
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/.hive-staging_hive_2023-02-15_23-49-12_615_3469634261131180483-1/-ext-10002
+Moving data to directory hdfs://localhost/user/hive/warehouse/project.db/parking_time_vioaltion
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 3.15 sec   HDFS Read: 121398 HDFS Write: 99234 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 150 msec
+OK
+plate_id        registration_state      plate_type      issuing_date    violation_code  vehicle_body_type       vehicle_make    issuing_agency  segments
+Time taken: 19.298 seconds
+hive> select * from parking_time_vioaltion limit 5;
+OK
+parking_time_vioaltion.plate_id parking_time_vioaltion.registration_state       parking_time_vioaltion.plate_type       parking_time_vioaltion.issuing_date     parking_time_vioaltion.violation_code   parking_time_vioaltion.vehicle_body_type parking_time_vioaltion.vehicle_make     parking_time_vioaltion.issuing_agency   parking_time_vioaltion.segments
+HCP7926 NY      PAS     2018-07-16      21      SDN     ME/BE   S       2
+HSZ2472 NY      PAS     2018-07-13      21      SUBN    ME/BE   S       3
+HYJ1988 NY      PAS     2018-07-13      21      SUBN    HONDA   S       4
+HNV6246 NY      PAS     2018-07-13      21      SUBN    TOYOT   S       3
+HWG4025 NY      PAS     2018-07-13      21      SUBN    HYUND   S       3
+Time taken: 0.145 seconds, Fetched: 5 row(s)
+hive> set hive.cli.print.header=true;
+hive> set hive.enforce.bucketing=true;
+hive> set hive.exec.dynamic.partition.mode=unstrict;
+hive> create table parking_violation_time_1
+    > (
+    > plate_id                string,                                      
+    > registration_state      string,                                      
+    > plate_type              string,                                      
+    > issuing_date            string,                                      
+    > violation_code          int,                                      
+    > vehicle_body_type       string,                                      
+    > vehicle_make            string,                                      
+    > issuing_agency          string                                      
+    > )
+    > partitioned by (segments string)
+    > clustered by(plate_id)
+    > sorted by (plate_id)
+    > into 2 buckets
+    > stored as orc;
+OK
+Time taken: 0.1 seconds
+hive> insert overwrite table parking_violation_time_1 partition(segments) 
+    > select
+    > plate_id,                                               
+    > registration_state,                                     
+    > plate_type,                                             
+    > issuing_date,                                           
+    > violation_code,                                         
+    > vehicle_body_type,                                      
+    > vehicle_make,                                           
+    > issuing_agency,                                         
+    > segments
+    > from parking_time_vioaltion;
+Query ID = abc_20230215235044_55136e61-49a3-4762-80c4-c2eb472e141e
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks determined at compile time: 2
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676484764582_0004, Tracking URL = http://62db46851618:8088/proxy/application_1676484764582_0004/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676484764582_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 2
+2023-02-15 23:50:55,162 Stage-1 map = 0%,  reduce = 0%
+2023-02-15 23:51:02,322 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.78 sec
+2023-02-15 23:51:09,499 Stage-1 map = 100%,  reduce = 50%, Cumulative CPU 8.29 sec
+2023-02-15 23:51:10,520 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 14.04 sec
+MapReduce Total cumulative CPU time: 14 seconds 40 msec
+Ended Job = job_1676484764582_0004
+Loading data to table project.parking_violation_time_1 partition (segments=null)
+
+
+         Time taken to load dynamic partitions: 0.683 seconds
+         Time taken for adding to write entity : 0.001 seconds
+Launching Job 2 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676484764582_0005, Tracking URL = http://62db46851618:8088/proxy/application_1676484764582_0005/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676484764582_0005
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 1
+2023-02-15 23:51:24,070 Stage-3 map = 0%,  reduce = 0%
+2023-02-15 23:51:32,265 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 1.88 sec
+2023-02-15 23:51:37,388 Stage-3 map = 100%,  reduce = 100%, Cumulative CPU 4.54 sec
+MapReduce Total cumulative CPU time: 4 seconds 540 msec
+Ended Job = job_1676484764582_0005
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 2   Cumulative CPU: 14.04 sec   HDFS Read: 129190 HDFS Write: 42472 SUCCESS
+Stage-Stage-3: Map: 1  Reduce: 1   Cumulative CPU: 4.54 sec   HDFS Read: 31494 HDFS Write: 19625 SUCCESS
+Total MapReduce CPU Time Spent: 18 seconds 580 msec
+OK
+plate_id        registration_state      plate_type      issuing_date    violation_code  vehicle_body_type       vehicle_make    issuing_agency  segments
+Time taken: 54.646 seconds
+hive> select * from parking_violation_time_1 limit 5;
+OK
+parking_violation_time_1.plate_id       parking_violation_time_1.registration_state     parking_violation_time_1.plate_type     parking_violation_time_1.issuing_date   parking_violation_time_1.violation_code  parking_violation_time_1.vehicle_body_type      parking_violation_time_1.vehicle_make   parking_violation_time_1.issuing_agency parking_violation_time_1.segments
+G3838ML NY      COM     2018-07-18      85      DELV    UD      S       1
+GBM5676 NY      PAS     2018-07-13      21      SDN     VOLKS   S       1
+GGF2602 NY      PAS     2018-07-13      21      SDN     HONDA   S       1
+GLN2650 NY      PAS     2018-07-17      21      SDN     NISSA   S       1
+GML4734 NY      PAS     2018-07-16      21      SDN     HONDA   S       1
+Time taken: 0.224 seconds, Fetched: 5 row(s)
+
+7.) Now, try another direction. For the 3 most commonly occurring violation codes, find the most common times of day (in terms of the bins from the previous part)
+SELECT distinct segments
+FROM parking_violation_time_1
+WHERE violation_code IN (
+  SELECT violation_code
+  FROM (
+    SELECT violation_code, COUNT(*) AS count
+    FROM parking_violation_time_1
+    GROUP BY violation_code
+    ORDER BY count DESC
+  ) subquery
+)
+limit 3;
+segements
+3
+1
+2
+8.) Let’s try and find some seasonality in this data
+      a.) First, divide the year into some number of seasons, and find frequencies of tickets for each season. (Hint: A quick Google search reveals the following seasons in NYC: Spring(March, April, March); Summer(June, July, August); Fall(September, October, November); Winter(December, January, February))
+	  hive> create table date_parking_final as
+    > select case 
+    > when month(issued_date)=3 then 1
+    > when month(issued_date)=4 then 1
+    > when month(issued_date)=5 then 1
+    > when month(issued_date)=6 then 2
+    > when month(issued_date)=7 then 2
+    > when month(issued_date)=8 then 2
+    > when month(issued_date)=9 then 3
+    > when month(issued_date)=10 then 3
+    > when month(issued_date)=11 then 3
+    > when month(issued_date)=12 then 4
+    > when month(issued_date)=1 then 4
+    > when month(issued_date)=2 then 4
+    > end as issued_season,
+    > violation_code 
+    > from date_parking;
+Query ID = abc_20230216011115_48828041-30b7-4c53-8f0f-55a101b00d89
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1676489205796_0002, Tracking URL = http://4acae3dcb711:8088/proxy/application_1676489205796_0002/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676489205796_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-02-16 01:11:24,385 Stage-1 map = 0%,  reduce = 0%
+2023-02-16 01:11:32,577 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.79 sec
+MapReduce Total cumulative CPU time: 3 seconds 790 msec
+Ended Job = job_1676489205796_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost/user/hive/warehouse/.hive-staging_hive_2023-02-16_01-11-15_855_6358866977202329385-1/-ext-10002
+Moving data to directory hdfs://localhost/user/hive/warehouse/date_parking_final
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 3.79 sec   HDFS Read: 41255 HDFS Write: 11621 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 790 msec
+OK
+issued_season   violation_code
+Time taken: 17.967 seconds
+hive> select * from date_parking_final limit 5;
+OK
+date_parking_final.issued_season        date_parking_final.violation_code
+2       21
+2       21
+2       21
+2       21
+2       21
+Time taken: 0.143 seconds, Fetched: 5 row(s)
+hive> 
+
+hive> select issued_season,count(*) as frequency from date_parking_final group by 1 order by 1;
+Query ID = abc_20230216011422_0dc26c92-6b1d-472a-9c46-092d0a0a4e25
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676489205796_0005, Tracking URL = http://4acae3dcb711:8088/proxy/application_1676489205796_0005/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676489205796_0005
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-16 01:14:31,538 Stage-1 map = 0%,  reduce = 0%
+2023-02-16 01:14:39,725 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.36 sec
+2023-02-16 01:14:44,837 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.51 sec
+MapReduce Total cumulative CPU time: 4 seconds 510 msec
+Ended Job = job_1676489205796_0005
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676489205796_0006, Tracking URL = http://4acae3dcb711:8088/proxy/application_1676489205796_0006/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676489205796_0006
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-16 01:14:58,566 Stage-2 map = 0%,  reduce = 0%
+2023-02-16 01:15:05,720 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 2.03 sec
+2023-02-16 01:15:11,854 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.65 sec
+MapReduce Total cumulative CPU time: 4 seconds 650 msec
+Ended Job = job_1676489205796_0006
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.51 sec   HDFS Read: 23544 HDFS Write: 136 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.65 sec   HDFS Read: 7538 HDFS Write: 122 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 160 msec
+OK
+issued_season   frequency
+2       2306
+4       1
+Time taken: 50.402 seconds, Fetched: 2 row(s)
+hive>
+
+      b.)Then, find the 3 most common violations for each of these seasons.
+	  
+	  hive> select distinct a.ranking,a.issued_season,a.violation_code
+    > from
+    > (
+    > select f.issued_season,f.violation_code,dense_rank() over(partition by f.issued_season order by f.number_of_violations desc) as ranking
+    > from
+    > (select  issued_season,violation_code,count(*) as number_of_violations from date_parking_final group by 1, 2 order by 3 desc) f
+    > ) a
+    > where a.ranking<4;
+Query ID = abc_20230216095559_f59ad5bd-e124-47c3-aba4-bbbe6e7efbf8
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676520506251_0012, Tracking URL = http://546a2c581d84:8088/proxy/application_1676520506251_0012/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676520506251_0012
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-02-16 09:56:07,869 Stage-1 map = 0%,  reduce = 0%
+2023-02-16 09:56:16,033 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.49 sec
+2023-02-16 09:56:21,136 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.54 sec
+MapReduce Total cumulative CPU time: 4 seconds 540 msec
+Ended Job = job_1676520506251_0012
+Launching Job 2 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1676520506251_0013, Tracking URL = http://546a2c581d84:8088/proxy/application_1676520506251_0013/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1676520506251_0013
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2023-02-16 09:56:34,632 Stage-2 map = 0%,  reduce = 0%
+2023-02-16 09:56:41,771 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 2.46 sec
+2023-02-16 09:56:47,896 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 6.19 sec
+MapReduce Total cumulative CPU time: 6 seconds 190 msec
+Ended Job = job_1676520506251_0013
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.54 sec   HDFS Read: 24222 HDFS Write: 398 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 6.19 sec   HDFS Read: 11178 HDFS Write: 163 SUCCESS
+Total MapReduce CPU Time Spent: 10 seconds 730 msec
+OK
+a.ranking       a.issued_season a.violation_code
+1       2       21
+2       2       14
+3       2       40
+1       4       21
+Time taken: 49.687 seconds, Fetched: 4 row(s)
+hive> 
